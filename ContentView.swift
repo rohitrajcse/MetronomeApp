@@ -19,7 +19,6 @@ class MetronomeManager: ObservableObject {
         loadClickSound() // Load default sound
     }
     
-    // Change access level from private to internal or public
     func loadClickSound() {
         let soundName = selectedSound.lowercased() // Get the current sound
         if let soundURL = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
@@ -203,9 +202,13 @@ struct SettingsView: View {
                     Toggle("Dark Mode", isOn: $isDarkModeEnabled)
                         .onChange(of: isDarkModeEnabled) { value in
                             if value {
-                                UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .dark
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                                    windowScene.windows.first?.overrideUserInterfaceStyle = .dark
+                                }
                             } else {
-                                UIApplication.shared.windows.first?.overrideUserInterfaceStyle = .light
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                                    windowScene.windows.first?.overrideUserInterfaceStyle = .light
+                                }
                             }
                         }
                 }
