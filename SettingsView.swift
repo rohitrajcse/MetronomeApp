@@ -2,8 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var metronome: MetronomeManager
-    @State private var isVibrationEnabled = false
-    @State private var isDarkModeEnabled = false
+    @ObservedObject var settingsManager = SettingsManager.shared
 
     var body: some View {
         NavigationView {
@@ -27,7 +26,7 @@ struct SettingsView: View {
                         metronome.setupAudio() // Reload new sound based on selection
                     }
                     
-                    Toggle("Vibration", isOn: $isVibrationEnabled)
+                    Toggle("Vibration", isOn: $settingsManager.isVibrationEnabled)
                         .padding(.top)
                         .font(.title3) // Increased font size for toggle
                 }
@@ -35,18 +34,7 @@ struct SettingsView: View {
                 Section(header: Text("Appearance")
                             .font(.headline)
                             .padding(.bottom, 5)) {
-                    Toggle("Dark Mode", isOn: $isDarkModeEnabled)
-                        .onChange(of: isDarkModeEnabled) { value in
-                            if value {
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                                    windowScene.windows.first?.overrideUserInterfaceStyle = .dark
-                                }
-                            } else {
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                                    windowScene.windows.first?.overrideUserInterfaceStyle = .light
-                                }
-                            }
-                        }
+                    Toggle("Dark Mode", isOn: $settingsManager.isDarkModeEnabled)
                         .font(.title3) // Increased font size for toggle
                 }
             }
