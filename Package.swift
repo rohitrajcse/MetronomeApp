@@ -17,7 +17,7 @@ let package = Package(
             name: "MetronomeApp",
             targets: ["AppModule"],
             bundleIdentifier: "com.rohitraj.MetronomeApp",
-            teamIdentifier: "82F3R6M6RD",
+            teamIdentifier: "XRBQ8L796F",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .note),
