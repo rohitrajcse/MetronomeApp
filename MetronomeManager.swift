@@ -9,7 +9,7 @@ class MetronomeManager: ObservableObject {
             updateTimer()
         }
     }
-    @Published var selectedSound: String = "belt-slap-fat_A#.wav"
+    @Published var selectedSound: String = "metronome-sfx.wav"
 
     private var audioPlayer: AVAudioPlayer?
     private var timer: Timer?

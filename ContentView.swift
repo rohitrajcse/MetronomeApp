@@ -58,7 +58,7 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("Home")
+            .navigationTitle("TempoNome")
         }
     }
 }
