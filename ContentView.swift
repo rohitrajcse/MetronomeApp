@@ -7,7 +7,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text("Your Pocket Metronome for Perfect Timing")
+                Text("Your Pocket Metronome")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
