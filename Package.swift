@@ -20,8 +20,8 @@ let package = Package(
             teamIdentifier: "82F3R6M6RD",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .clock),
-            accentColor: .presetColor(.teal),
+            appIcon: .placeholder(icon: .note),
+            accentColor: .presetColor(.purple),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -38,7 +38,13 @@ let package = Package(
         .executableTarget(
             name: "AppModule",
             path: ".",
-            resources: [.copy("metronome.mp3")]
+            resources: [
+                .copy("Metronome_Sounds/belt-slap-fat_A#.wav"),
+                .copy("Metronome_Sounds/hollow-percussion-hit-object.wav"),
+                .copy("Metronome_Sounds/keyboard-click.wav"),
+                .copy("Metronome_Sounds/metronome-sfx.wav"),
+                .copy("Metronome_Sounds/percussion-hit-object-hit-2.wav")
+            ]
         )
     ],
     swiftLanguageVersions: [.version("6")]
