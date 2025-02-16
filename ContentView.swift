@@ -4,8 +4,6 @@ struct ContentView: View {
     @StateObject private var metronome = MetronomeManager()
     @State private var isSettingsPresented = false
 
-    let timeSignatures = ["4/4", "3/4", "6/8"]
-    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -21,26 +19,26 @@ struct ContentView: View {
                     Slider(value: $metronome.bpm, in: 40...240, step: 1)
                         .padding(.horizontal)
                 }
-                
-                Picker("Time Signature", selection: $metronome.timeSignature) {
-                    ForEach(timeSignatures, id: \.self) { signature in
-                        Text(signature)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal)
 
-                NavigationLink(destination: MetronomeControlView(metronome: metronome)) {
-                    Text("Start Metronome")
+                // Start/Stop Metronome Button
+                Button(action: {
+                    if metronome.isPlaying {
+                        metronome.stopMetronome()
+                    } else {
+                        metronome.startMetronome()
+                    }
+                }) {
+                    Text(metronome.isPlaying ? "Stop Metronome" : "Start Metronome")
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue)
+                        .background(metronome.isPlaying ? Color.red : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
                 .padding(.horizontal)
 
+                // Settings Button
                 Button(action: {
                     isSettingsPresented.toggle()
                 }) {

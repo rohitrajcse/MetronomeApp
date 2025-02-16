@@ -19,7 +19,6 @@ class SettingsManager: ObservableObject {
     }
     
     init() {
-        // Load saved settings
         self.isVibrationEnabled = UserDefaults.standard.bool(forKey: "isVibrationEnabled")
         self.isDarkModeEnabled = UserDefaults.standard.bool(forKey: "isDarkModeEnabled")
     }

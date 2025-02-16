@@ -7,11 +7,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Sound Settings")
-                            .font(.headline)
-                            .padding(.bottom, 5)) {
-                    
-                    // Picker with improved UI
+                Section(header: Text("Sound Settings").font(.headline).padding(.bottom, 5)) {
                     Picker("Sound", selection: $metronome.selectedSound) {
                         Text("Belt").tag("belt-slap-fat_A#.wav")
                         Text("Hollow Percussion").tag("hollow-percussion-hit-object.wav")
@@ -19,23 +15,21 @@ struct SettingsView: View {
                         Text("Tick").tag("metronome-sfx.wav")
                         Text("Percussion Hit").tag("percussion-hit-object-hit-2.wav")
                     }
-                    .pickerStyle(MenuPickerStyle()) // Changed to a Menu style for better UI
-                    .font(.title3) // Increased font size for readability
+                    .pickerStyle(MenuPickerStyle())
+                    .font(.title3)
                     .padding(.horizontal)
                     .onChange(of: metronome.selectedSound) { _ in
-                        metronome.setupAudio() // Reload new sound based on selection
+                        metronome.setupAudio()
                     }
                     
                     Toggle("Vibration", isOn: $settingsManager.isVibrationEnabled)
                         .padding(.top)
-                        .font(.title3) // Increased font size for toggle
+                        .font(.title3)
                 }
                 
-                Section(header: Text("Appearance")
-                            .font(.headline)
-                            .padding(.bottom, 5)) {
+                Section(header: Text("Appearance").font(.headline).padding(.bottom, 5)) {
                     Toggle("Dark Mode", isOn: $settingsManager.isDarkModeEnabled)
-                        .font(.title3) // Increased font size for toggle
+                        .font(.title3)
                 }
             }
             .navigationTitle("Settings")
