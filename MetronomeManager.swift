@@ -1,6 +1,7 @@
 import AVFoundation
 import CoreHaptics
 
+@MainActor // Ensure all methods in this class are executed on the main thread
 class MetronomeManager: ObservableObject {
     @Published var isPlaying = false
     @Published var bpm: Double = 120 {
@@ -43,7 +44,9 @@ class MetronomeManager: ObservableObject {
     func startMetronome() {
         isPlaying = true
         updateTimer()
-        playHaptics()
+        Task { @MainActor in
+            playHaptics()  // Ensure haptic feedback plays on the main thread
+        }
     }
     
     func stopMetronome() {
@@ -56,8 +59,10 @@ class MetronomeManager: ObservableObject {
         if isPlaying {
             let interval = 60.0 / bpm
             timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-                self?.playClick()
-                self?.playHaptics()
+                Task { @MainActor in
+                    self?.playClick()  // Ensure playClick() is called on the main thread
+                    self?.playHaptics() // Ensure playHaptics() is called on the main thread
+                }
             }
         }
     }
@@ -71,14 +76,16 @@ class MetronomeManager: ObservableObject {
     }
     
     private func playHaptics() {
-        guard let hapticEngine = hapticEngine else { return }
-        let pattern = try? CHHapticPattern(events: [CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)], parameters: [])
-        if let pattern = pattern {
-            do {
-                let player = try hapticEngine.makePlayer(with: pattern)
-                try player.start(atTime: 0)
-            } catch {
-                print("Haptic playback failed: \(error.localizedDescription)")
+        // Check if vibration is enabled on the main thread
+        if SettingsManager.shared.isVibrationEnabled, let hapticEngine = hapticEngine {
+            let pattern = try? CHHapticPattern(events: [CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)], parameters: [])
+            if let pattern = pattern {
+                do {
+                    let player = try hapticEngine.makePlayer(with: pattern)
+                    try player.start(atTime: 0)
+                } catch {
+                    print("Haptic playback failed: \(error.localizedDescription)")
+                }
             }
         }
     }
