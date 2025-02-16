@@ -3,6 +3,8 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var metronome = MetronomeManager()
     @State private var isSettingsPresented = false
+    @State private var isRecording = false
+    @State private var recordedAudio: URL?
 
     var body: some View {
         NavigationView {
@@ -20,7 +22,6 @@ struct ContentView: View {
                         .padding(.horizontal)
                 }
 
-                // Start/Stop Metronome Button
                 Button(action: {
                     if metronome.isPlaying {
                         metronome.stopMetronome()
@@ -38,7 +39,6 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
 
-                // Settings Button
                 Button(action: {
                     isSettingsPresented.toggle()
                 }) {
@@ -60,5 +60,7 @@ struct ContentView: View {
             .padding()
             .navigationTitle("TempoNome")
         }
+        // Removed .onAppear code that was starting the metronome automatically
     }
 }
+

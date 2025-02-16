@@ -10,6 +10,7 @@ class MetronomeManager: ObservableObject {
         }
     }
     @Published var selectedSound: String = "metronome-sfx.wav"
+    @Published var volume: Float = 1.0
 
     private var audioPlayer: AVAudioPlayer?
     private var timer: Timer?
@@ -19,17 +20,18 @@ class MetronomeManager: ObservableObject {
         setupAudio()
         setupHaptics()
     }
-    
+
     func setupAudio() {
         guard let soundURL = Bundle.main.url(forResource: selectedSound, withExtension: nil) else { return }
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
             audioPlayer?.prepareToPlay()
+            audioPlayer?.volume = volume
         } catch {
             print("Error loading sound: \(error.localizedDescription)")
         }
     }
-    
+
     func setupHaptics() {
         do {
             hapticEngine = try CHHapticEngine()
@@ -42,16 +44,13 @@ class MetronomeManager: ObservableObject {
     func startMetronome() {
         isPlaying = true
         updateTimer()
-        Task { @MainActor in
-            playHaptics()
-        }
     }
-    
+
     func stopMetronome() {
         isPlaying = false
         timer?.invalidate()
     }
-    
+
     private func updateTimer() {
         timer?.invalidate()
         if isPlaying {
@@ -71,7 +70,7 @@ class MetronomeManager: ObservableObject {
         audioPlayer?.currentTime = 0
         audioPlayer?.play()
     }
-    
+
     private func playHaptics() {
         if SettingsManager.shared.isVibrationEnabled, let hapticEngine = hapticEngine {
             let pattern = try? CHHapticPattern(events: [CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)], parameters: [])
