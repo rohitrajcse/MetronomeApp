@@ -16,12 +16,21 @@ class MetronomeManager: ObservableObject {
     private var timer: Timer?
 
     init() {
+        // Set up audio session for playback
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true)
+        } catch {
+            print("Audio session setup failed: \(error.localizedDescription)")
+        }
+        
         loadClickSound() // Load default sound
     }
     
     func loadClickSound() {
-        let soundName = selectedSound.lowercased() // Get the current sound
-        if let soundURL = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
+        let soundName = "metronome" // Use the exact file name without extension
+        if let soundURL = Bundle.main.url(forResource: "metronome", withExtension: "mp3") {
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
                 audioPlayer?.prepareToPlay()
@@ -30,7 +39,7 @@ class MetronomeManager: ObservableObject {
                 print("Error loading \(soundName) sound: \(error.localizedDescription)")
             }
         } else {
-            print("\(selectedSound).mp3 file not found in the bundle.")
+            print("\(soundName).mp3 file not found in the bundle.")
         }
     }
     
@@ -60,6 +69,7 @@ class MetronomeManager: ObservableObject {
             print("Audio player is not initialized.")
             return
         }
+        print("Playing sound...")
         player.stop()
         player.currentTime = 0
         player.play()

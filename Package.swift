@@ -37,7 +37,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AppModule",
-            path: "."
+            path: ".",
+            resources: [.copy("metronome.mp3")]
         )
     ],
     swiftLanguageVersions: [.version("6")]
