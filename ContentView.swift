@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var metronome = MetronomeManager()
     @State private var isSettingsPresented = false
+    @State private var isSliderHidden = false // State variable to track slider visibility
 
     var body: some View {
         NavigationView {
@@ -16,16 +17,22 @@ struct ContentView: View {
                 VStack {
                     Text("BPM: \(Int(metronome.bpm))")
                         .font(.headline)
-                    Slider(value: $metronome.bpm, in: 40...240, step: 1)
-                        .padding(.horizontal)
+
+                    // Show slider only if it's not hidden
+                    if !isSliderHidden {
+                        Slider(value: $metronome.bpm, in: 40...240, step: 1)
+                            .padding(.horizontal)
+                    }
                 }
 
                 Button(action: {
                     withAnimation {
                         if metronome.isPlaying {
                             metronome.stopMetronome()
+                            isSliderHidden = false // Show slider when stopped
                         } else {
                             metronome.startMetronome()
+                            isSliderHidden = true // Hide slider when playing
                         }
                     }
                 }) {
