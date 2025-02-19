@@ -60,7 +60,6 @@ struct ContentView: View {
             .padding()
             .navigationTitle("TempoNome")
         }
-        // Removed .onAppear code that was starting the metronome automatically
     }
 }
 
