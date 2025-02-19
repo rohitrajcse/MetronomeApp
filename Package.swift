@@ -16,8 +16,8 @@ let package = Package(
         .iOSApplication(
             name: "MetronomeApp",
             targets: ["AppModule"],
-            bundleIdentifier: "com.rohitraj.MetronomeApp",
-            teamIdentifier: "XRBQ8L796F",
+            bundleIdentifier: "com.rohitraj2.MetronomeApp",
+            teamIdentifier: "82F3R6M6RD",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .note),

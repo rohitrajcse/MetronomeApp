@@ -73,7 +73,17 @@ class MetronomeManager: ObservableObject {
 
     private func playHaptics() {
         if SettingsManager.shared.isVibrationEnabled, let hapticEngine = hapticEngine {
-            let pattern = try? CHHapticPattern(events: [CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)], parameters: [])
+            let events = [
+                CHHapticEvent(eventType: .hapticTransient,
+                              parameters: [],
+                              relativeTime: 0),
+                CHHapticEvent(eventType: .hapticContinuous,
+                              parameters: [],
+                              relativeTime: 0.1,
+                              duration: 0.2)
+            ]
+            
+            let pattern = try? CHHapticPattern(events: events, parameters: [])
             if let pattern = pattern {
                 do {
                     let player = try hapticEngine.makePlayer(with: pattern)

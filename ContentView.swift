@@ -3,8 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var metronome = MetronomeManager()
     @State private var isSettingsPresented = false
-    @State private var isRecording = false
-    @State private var recordedAudio: URL?
 
     var body: some View {
         NavigationView {
@@ -23,10 +21,12 @@ struct ContentView: View {
                 }
 
                 Button(action: {
-                    if metronome.isPlaying {
-                        metronome.stopMetronome()
-                    } else {
-                        metronome.startMetronome()
+                    withAnimation {
+                        if metronome.isPlaying {
+                            metronome.stopMetronome()
+                        } else {
+                            metronome.startMetronome()
+                        }
                     }
                 }) {
                     Text(metronome.isPlaying ? "Stop Metronome" : "Start Metronome")
@@ -55,6 +55,9 @@ struct ContentView: View {
                     SettingsView(metronome: metronome)
                 }
 
+                PulsatingCircle(isPlaying: metronome.isPlaying, bpm: metronome.bpm)
+                    .padding(.top, 20)
+
                 Spacer()
             }
             .padding()
@@ -63,3 +66,55 @@ struct ContentView: View {
     }
 }
 
+struct PulsatingCircle: View {
+    var isPlaying: Bool
+    var bpm: Double
+    @State private var scale: CGFloat = 1.0
+    @State private var animationID = UUID()
+
+    var body: some View {
+        Circle()
+            .fill(Color.blue.opacity(0.5))
+            .frame(width: 100, height: 100)
+            .scaleEffect(scale)
+            .id(animationID)
+            .onAppear {
+                if isPlaying {
+                    startAnimation()
+                }
+            }
+            .onChange(of: isPlaying) { newValue in
+                if newValue {
+                    startAnimation()
+                } else {
+                    stopAnimation()
+                }
+            }
+            .onChange(of: bpm) { newValue in
+                if isPlaying {
+                    restartAnimation(newBPM: newValue)
+                }
+            }
+    }
+
+    private func startAnimation() {
+        let duration = 60.0 / bpm
+        withAnimation(Animation.easeInOut(duration: duration).repeatForever(autoreverses: true)) {
+            scale = 1.2
+        }
+    }
+
+    private func stopAnimation() {
+        withAnimation(.easeOut(duration: 0.2)) {
+            scale = 1.0
+        }
+    }
+
+    private func restartAnimation(newBPM: Double) {
+        let duration = 60.0 / newBPM
+        withAnimation(Animation.easeInOut(duration: duration).repeatForever(autoreverses: true)) {
+            scale = 1.2
+        }
+        animationID = UUID() // Change ID to force animation reset
+    }
+}
