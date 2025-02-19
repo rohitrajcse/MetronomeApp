@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var metronome = MetronomeManager()
     @State private var isSettingsPresented = false
-    @State private var isSliderHidden = false // State variable to track slider visibility
+    @State private var isSliderHidden = false
 
     var body: some View {
         NavigationView {
@@ -18,7 +18,6 @@ struct ContentView: View {
                     Text("BPM: \(Int(metronome.bpm))")
                         .font(.headline)
 
-                    // Show slider only if it's not hidden
                     if !isSliderHidden {
                         Slider(value: $metronome.bpm, in: 40...240, step: 1)
                             .padding(.horizontal)
@@ -29,10 +28,10 @@ struct ContentView: View {
                     withAnimation {
                         if metronome.isPlaying {
                             metronome.stopMetronome()
-                            isSliderHidden = false // Show slider when stopped
+                            isSliderHidden = false
                         } else {
                             metronome.startMetronome()
-                            isSliderHidden = true // Hide slider when playing
+                            isSliderHidden = true
                         }
                     }
                 }) {
@@ -62,7 +61,7 @@ struct ContentView: View {
                     SettingsView(metronome: metronome)
                 }
 
-                PulsatingCircle(isPlaying: metronome.isPlaying, bpm: metronome.bpm)
+                SHMPendulum(isPlaying: metronome.isPlaying, bpm: metronome.bpm)
                     .padding(.top, 20)
 
                 Spacer()
@@ -73,55 +72,60 @@ struct ContentView: View {
     }
 }
 
-struct PulsatingCircle: View {
+struct SHMPendulum: View {
     var isPlaying: Bool
     var bpm: Double
-    @State private var scale: CGFloat = 1.0
-    @State private var animationID = UUID()
+    @State private var offsetX: CGFloat = 0
 
     var body: some View {
-        Circle()
-            .fill(Color.blue.opacity(0.5))
-            .frame(width: 100, height: 100)
-            .scaleEffect(scale)
-            .id(animationID)
-            .onAppear {
-                if isPlaying {
-                    startAnimation()
-                }
+        GeometryReader { geo in
+            let ballRadius: CGFloat = 20 // Radius of the ball
+            let maxX = (geo.size.width / 2) - ballRadius // Maximum displacement from center
+
+            ZStack {
+                // Line for the pendulum to travel on
+                Rectangle()
+                    .fill(Color.gray.opacity(0.5))
+                    .frame(height: 2)
+                    .padding(.horizontal)
+
+                Circle()
+                    .fill(Color.blue.opacity(0.7))
+                    .frame(width: ballRadius * 2, height: ballRadius * 2)
+                    .offset(x: offsetX)
+                    .onAppear {
+                        if isPlaying {
+                            startAnimation(maxX: maxX)
+                        }
+                    }
+                    .onChange(of: isPlaying) { newValue in
+                        if newValue {
+                            startAnimation(maxX: maxX)
+                        } else {
+                            stopAnimation()
+                        }
+                    }
+                    .onChange(of: bpm) { _ in
+                        if isPlaying {
+                            startAnimation(maxX: maxX)
+                        }
+                    }
             }
-            .onChange(of: isPlaying) { newValue in
-                if newValue {
-                    startAnimation()
-                } else {
-                    stopAnimation()
-                }
-            }
-            .onChange(of: bpm) { newValue in
-                if isPlaying {
-                    restartAnimation(newBPM: newValue)
-                }
-            }
+        }
+        .frame(height: 80) // Keep the animation area reasonable
     }
 
-    private func startAnimation() {
-        let duration = 60.0 / bpm
-        withAnimation(Animation.easeInOut(duration: duration).repeatForever(autoreverses: true)) {
-            scale = 1.2
+    private func startAnimation(maxX: CGFloat) {
+        // Move from the left extreme to the right extreme and back
+        withAnimation(Animation.easeInOut(duration: 60.0 / bpm).repeatForever(autoreverses: true)) {
+            offsetX = maxX // This will make it swing from left to right
         }
     }
 
     private func stopAnimation() {
-        withAnimation(.easeOut(duration: 0.2)) {
-            scale = 1.0
-        }
-    }
-
-    private func restartAnimation(newBPM: Double) {
-        let duration = 60.0 / newBPM
-        withAnimation(Animation.easeInOut(duration: duration).repeatForever(autoreverses: true)) {
-            scale = 1.2
-        }
-        animationID = UUID() // Change ID to force animation reset
+        offsetX = 0 // Reset to center
     }
 }
+
+
+
