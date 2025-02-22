@@ -35,10 +35,10 @@ struct SettingsView: View {
                         .font(.title3) 
                 }
                 
-                Section(header: Text("Appearance").font(.headline).padding(.bottom, 5)) {
-                    Toggle("Dark Mode", isOn: $settingsManager.isDarkModeEnabled)
-                        .font(.title3)
-                }
+//                Section(header: Text("Appearance").font(.headline).padding(.bottom, 5)) {
+//                    Toggle("Dark Mode", isOn: $settingsManager.isDarkModeEnabled)
+//                        .font(.title3)
+//                }
             }
             .navigationTitle("Settings")
         }
