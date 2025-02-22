@@ -9,13 +9,18 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 20) {
                 Text("Your Pocket Metronome")
-                    .font(.largeTitle)
+                    .font(.title)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .foregroundStyle(
+                        LinearGradient(gradient: Gradient(colors: [Color.purple, Color.blue]),
+                                       startPoint: .leading,
+                                       endPoint: .trailing)
+                    )
 
                 VStack {
-                    Text("BPM: \(Int(metronome.bpm))")
+                    Text("\(Int(metronome.bpm)) BPM")
                         .font(.headline)
 
                     if !isSliderHidden {
@@ -39,7 +44,7 @@ struct ContentView: View {
                         .font(.title2)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(metronome.isPlaying ? Color.red : Color.blue)
+                        .background(metronome.isPlaying ? Color.red : Color.purple)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -61,9 +66,31 @@ struct ContentView: View {
                     SettingsView(metronome: metronome)
                 }
 
-                SHMPendulum(isPlaying: metronome.isPlaying, bpm: metronome.bpm)
-                    .padding(.top, 20)
+                // Sound Picker at the bottom
+                VStack {
+                    Text("Select Sound")
+                        .font(.headline)
+                        .padding(.top)
 
+                    Picker("Sound", selection: $metronome.selectedSound) {
+                        Text("Belt").tag("belt-slap-fat_A#.wav")
+                        Text("Hollow Percussion").tag("hollow-percussion-hit-object.wav")
+                        Text("Keyboard").tag("keyboard-click.wav")
+                        Text("Tick").tag("metronome-sfx.wav")
+                        Text("Percussion Hit").tag("percussion-hit-object-hit-2.wav")
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .onChange(of: metronome.selectedSound) { _ in
+                        metronome.setupAudio() // Setup audio with the new sound
+                    }
+                    .padding(.horizontal)
+
+                    // 🎯 **Pulsating SHMPendulum Below Sound Picker**
+                    SHMPendulum(isPlaying: metronome.isPlaying, bpm: metronome.bpm)
+                        .frame(height: 100) // Adjust the height of the frame
+                        .padding(.top, 20)
+                }
+                
                 Spacer()
             }
             .padding()
@@ -75,57 +102,42 @@ struct ContentView: View {
 struct SHMPendulum: View {
     var isPlaying: Bool
     var bpm: Double
-    @State private var offsetX: CGFloat = 0
+    @State private var scale: CGFloat = 1.0
 
     var body: some View {
-        GeometryReader { geo in
-            let ballRadius: CGFloat = 20 // Radius of the ball
-            let maxX = (geo.size.width / 2) - ballRadius // Maximum displacement from center
-
-            ZStack {
-                // Line for the pendulum to travel on
-                Rectangle()
-                    .fill(Color.gray.opacity(0.5))
-                    .frame(height: 2)
-                    .padding(.horizontal)
-
-                Circle()
-                    .fill(Color.blue.opacity(0.7))
-                    .frame(width: ballRadius * 2, height: ballRadius * 2)
-                    .offset(x: offsetX)
-                    .onAppear {
-                        if isPlaying {
-                            startAnimation(maxX: maxX)
-                        }
-                    }
-                    .onChange(of: isPlaying) { newValue in
-                        if newValue {
-                            startAnimation(maxX: maxX)
-                        } else {
-                            stopAnimation()
-                        }
-                    }
-                    .onChange(of: bpm) { _ in
-                        if isPlaying {
-                            startAnimation(maxX: maxX)
-                        }
-                    }
+        Circle()
+            .fill(Color.purple.opacity(0.7))
+            .scaleEffect(scale)
+            .frame(width: 80, height: 80) // Set a fixed width and height for the circle
+            .onAppear {
+                if isPlaying {
+                    startPulsating()
+                }
             }
-        }
-        .frame(height: 80) // Keep the animation area reasonable
+            .onChange(of: isPlaying) { newValue in
+                if newValue {
+                    startPulsating()
+                } else {
+                    stopPulsating()
+                }
+            }
+            .onChange(of: bpm) { _ in
+                if isPlaying {
+                    stopPulsating()
+                    startPulsating()
+                }
+            }
     }
 
-    private func startAnimation(maxX: CGFloat) {
-        // Move from the left extreme to the right extreme and back
+    private func startPulsating() {
         withAnimation(Animation.easeInOut(duration: 60.0 / bpm).repeatForever(autoreverses: true)) {
-            offsetX = maxX // This will make it swing from left to right
+            scale = 1.2 // Scale up
         }
     }
 
-    private func stopAnimation() {
-        offsetX = 0 // Reset to center
+    private func stopPulsating() {
+        withAnimation {
+            scale = 1.0 // Reset scale
+        }
     }
 }
-
-
-

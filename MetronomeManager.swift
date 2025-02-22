@@ -77,10 +77,6 @@ class MetronomeManager: ObservableObject {
                 CHHapticEvent(eventType: .hapticTransient,
                               parameters: [],
                               relativeTime: 0),
-                CHHapticEvent(eventType: .hapticContinuous,
-                              parameters: [],
-                              relativeTime: 0.1,
-                              duration: 0.2)
             ]
             
             let pattern = try? CHHapticPattern(events: events, parameters: [])

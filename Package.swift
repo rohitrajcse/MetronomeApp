@@ -16,7 +16,7 @@ let package = Package(
         .iOSApplication(
             name: "MetronomeApp",
             targets: ["AppModule"],
-            bundleIdentifier: "com.rohitraj2.MetronomeApp",
+            bundleIdentifier: "com.rohitraj23.MetronomeApp",
             teamIdentifier: "82F3R6M6RD",
             displayVersion: "1.0",
             bundleVersion: "1",
@@ -31,7 +31,8 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .music
         )
     ],
     targets: [
