@@ -19,8 +19,9 @@ class SettingsManager: ObservableObject {
     }
     
     init() {
-        self.isVibrationEnabled = UserDefaults.standard.bool(forKey: "isVibrationEnabled")
-        self.isDarkModeEnabled = UserDefaults.standard.bool(forKey: "isDarkModeEnabled")
+        self.isVibrationEnabled = true
+        self.isDarkModeEnabled = true
+        applyDarkModeSetting()
     }
     
     private func applyDarkModeSetting() {

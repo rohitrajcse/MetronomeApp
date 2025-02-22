@@ -8,16 +8,16 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "MetronomeApp",
+    name: "Temponome",
     platforms: [
         .iOS("16.0")
     ],
     products: [
         .iOSApplication(
-            name: "MetronomeApp",
+            name: "Temponome",
             targets: ["AppModule"],
-            bundleIdentifier: "com.rohitraj23.MetronomeApp",
-            teamIdentifier: "82F3R6M6RD",
+            bundleIdentifier: "com.rohitraj.MetronomeApp22",
+            teamIdentifier: "XRBQ8L796F",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .note),

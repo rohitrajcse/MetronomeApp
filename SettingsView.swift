@@ -32,12 +32,12 @@ struct SettingsView: View {
                 
                 Section(header: Text("Haptics Settings").font(.headline).padding(.bottom, 5)) {
                     Toggle("Vibration", isOn: $settingsManager.isVibrationEnabled)
-                        .font(.title3) // Make font size consistent with Dark Mode toggle
+                        .font(.title3) 
                 }
                 
                 Section(header: Text("Appearance").font(.headline).padding(.bottom, 5)) {
                     Toggle("Dark Mode", isOn: $settingsManager.isDarkModeEnabled)
-                        .font(.title3) // Ensure same font styling for consistency
+                        .font(.title3)
                 }
             }
             .navigationTitle("Settings")
